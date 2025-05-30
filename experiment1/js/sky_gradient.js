@@ -15,16 +15,18 @@
 */
 
 let skyParts = {
-  startingPos: [0, 100],
+  startingPos: [90, 100],
+  detail: 4,
   offsetX: 40,
   offsetY: 0,  
-  colors: ['red', 'blue']
+  colors: [[0,0,0], [125,125,125],[255, 255, 255]]
 }
 
 function p3_preload() {}
 
 function p3_setup() {
-  background(100)
+  background("cyan")
+  
 }
 
 let worldSeed;
@@ -36,10 +38,21 @@ function p3_worldKeyChanged(key) {
 }
 
 function p3_draw_gradient() {
+  //creates the gradient bases
   for (let i=0; i<skyParts.colors.length; i++){
-    ellipse(skyParts.startingPos[0]+skyParts.offsetX*i, 
-      skyParts.startingPos[1]+skyParts.offsetY*i, 
-      80, 80)
+    let col = skyParts.colors[i]
+    for(let j = 0; j<skyParts.detail; j++){
+      if (i != skyParts.colors.length){
+        let from = color(skyParts.colors[i][0], skyParts.colors[i][1], skyParts.colors[i][2])
+        let to = color(skyParts.colors[i+1][0], skyParts.colors[i+1][1], skyParts.colors[i+1][2])
+
+        col = lerpColor(from, to, j/(skyParts.detail))
+      }
+      fill(col)
+      ellipse(skyParts.startingPos[0]+skyParts.offsetX*i + skyParts.offsetX/skyParts.detail*j, 
+        skyParts.startingPos[1]+skyParts.offsetY*i, 
+        80, 80)
+    }
   }
 }
 
