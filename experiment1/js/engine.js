@@ -31,7 +31,7 @@ let camera_offset;
 let camera_velocity;
 
 let stars = [];
-let starCount = 20;
+let starCount = 30;
 
 /////////////////////////////
 // Transforms between coordinate systems
@@ -92,6 +92,7 @@ function draw() {
   }
 
   if(window.p3_draw_gradient){
+    // !!! COMMENTED OUT FOR TESTING STARS !!!
     //window.p3_draw_gradient()
   }
 
@@ -110,8 +111,16 @@ function mouseClicked() {
   // Check if any star is clicked
   for (let star of stars) {
     if (star.isHovered) {
+      if (star.popup) {
+        continue;
+      }
       // Do something when the star is clicked
       console.log("Star clicked at: ", star.x, star.y);
+      star.createPopup(canvas);
+    }
+    else if (star.popup) {
+      // If the star is not hovered and has a popup, remove it
+      star.removePopup();
     }
   }
 }
@@ -126,5 +135,4 @@ function generateStars() {
     let c = color('white');
     stars.push(new Star(x, y, radius, c));
   }
-  console.log(stars)
 }
