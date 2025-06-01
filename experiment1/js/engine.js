@@ -2,6 +2,7 @@
 // Author: Your Name
 // Date:
 
+
 // Here is how you might set up an OOP p5.js project
 // Note that p5.js looks for a file called sketch.js
 
@@ -29,11 +30,13 @@ let tile_rows, tile_columns;
 let camera_offset;
 let camera_velocity;
 
+let stars = [];
+let starCount = 30;
+
 /////////////////////////////
 // Transforms between coordinate systems
 // These are actually slightly weirder than in full 3d...
 /////////////////////////////
-
 
 
 
@@ -45,6 +48,7 @@ function preload() {
 
 // setup() function is called once when the program starts
 function setup() {
+  console.log("Setup Running")
   // place our canvas, making it fit our container
   canvasContainer = $(containerId);
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
@@ -60,6 +64,9 @@ function setup() {
   inputKey.change(() => {
     rebuildWorld(inputKey.val());
   });
+
+  //Clear the stars array and generate new stars
+  generateStars();
 
   rebuildWorld(inputKey.val());
 
@@ -85,12 +92,47 @@ function draw() {
   }
 
   if(window.p3_draw_gradient){
-    window.p3_draw_gradient()
+    // !!! COMMENTED OUT FOR TESTING STARS !!!
+    //window.p3_draw_gradient()
   }
 
+  for (let star of stars) {
+    star.draw();
+    star.checkMouseHover();
+  }
 
   if (window.p3_drawAfter) {
     window.p3_drawAfter();
   }
+
 }
 
+function mouseClicked() {
+  // Check if any star is clicked
+  for (let star of stars) {
+    if (star.isHovered) {
+      if (star.popup) {
+        continue;
+      }
+      // Do something when the star is clicked
+      console.log("Star clicked at: ", star.x, star.y);
+      star.createPopup(canvas);
+    }
+    else if (star.popup) {
+      // If the star is not hovered and has a popup, remove it
+      star.removePopup();
+    }
+  }
+}
+
+function generateStars() {
+  stars = [];
+  for (let i = 0; i < starCount; i++) {
+    let x = random(width);
+    let y = random(height / 2, 0);
+    let radius = random(2, 4); // Random radius between 2 and 4. Change later, they are big for testing
+
+    let c = color('white');
+    stars.push(new Star(x, y, radius, c));
+  }
+}

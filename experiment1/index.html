@@ -20,8 +20,9 @@
 	<!-- Load p5.js library -->
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.9.2/lib/p5.js"></script>
 
-	<!-- Link to javascript files - DEFER waits until all elements are rendered -->    <script type="text/javascript" src="../js/site.js" DEFER></script>   
+	<!-- Link to javascript files - DEFER waits until all elements are rendered -->    <!-- <script type="text/javascript" src="../js/site.js" DEFER></script> -->   
     <script src="js/xxhash.min.js" defer></script>
+	<script src="js/stars.js" defer></script>
     <script src="js/engine.js" defer></script>
     <script src="js/sky_gradient.js" defer></script>
 </head>
@@ -33,17 +34,24 @@
 			<h1>CMPM 147 Final Project</h1>
 
 			<div class="minor-section">
-                <h2>Procedural Sky Generator</h2>
+			<h2>Procedural Sky Generator</h2>
+
+			<!-- FLEX CONTAINER -->
+			<div class="main-layout">
 				<div id="canvas-container">
-					<!-- canvas will be added here -->
+				<!-- canvas goes here -->
 				</div>
-                <div class="fullscreen-box instructions">
-                    <div>
-                        World seed: <input type="text" id="world-seed" value="xyzzy">
-                    </div>
-                    <!-- <button id="fullscreen">Fullscreen</button> -->
-                </div>
+
+				<div class="settings-panel">
+				<h2>Settings</h2>
+				<div>
+					World seed: <input type="text" id="world-seed" value="xyzzy">
+				</div>
+				<!-- You can add more settings here -->
+				</div>
 			</div>
+			</div>
+
 
 			<div class="minor-section two-columns">
                 <div class="showcase-img">
