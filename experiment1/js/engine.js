@@ -93,7 +93,7 @@ function draw() {
 
   if(window.p3_draw_gradient){
     // !!! COMMENTED OUT FOR TESTING STARS !!!
-    //window.p3_draw_gradient()
+    window.p3_draw_gradient()
   }
 
   for (let star of stars) {
