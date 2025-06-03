@@ -15,7 +15,7 @@
 
 let skyParts = {
   startingPos: [90, 0],
-  detail: 10,
+  detail: 20,
   offsetX: 0,
   offsetY: 40,  
   colors: [
@@ -44,17 +44,20 @@ let slider = document.getElementById("offsetSlider");
 let offsetGlobalY = 0
 slider.oninput = function() {
   offsetGlobalY = this.value;
+  document.getElementById("sliderText").textContent="Time: "+seed_to_time(worldSeed);
+
 }
 
 function p3_worldKeyChanged(key) {
   worldSeed = XXH.h32(key, 0);
-  noiseSeed(worldSeed);
-  randomSeed(worldSeed);
+  worldSeed = 0 + (worldSeed%70)
+  slider.value = worldSeed
+  document.getElementById("sliderText").textContent="Time: "+seed_to_time(worldSeed);
 }
 
 function p3_draw_gradient() {
   //creates the gradient bases
-  
+
   for (let i=0; i<skyParts.colors.length; i++){
     let col = skyParts.colors[i]
     for(let j = 0; j<skyParts.detail; j++){
@@ -66,10 +69,37 @@ function p3_draw_gradient() {
       }
       fill(col)
       ellipse(skyParts.startingPos[0]+skyParts.offsetX*i + skyParts.offsetX/skyParts.detail*j, 
-        skyParts.startingPos[1]+skyParts.offsetY*i + skyParts.offsetY/skyParts.detail*j - offsetGlobalY*10, 
+        skyParts.startingPos[1]+skyParts.offsetY*i + skyParts.offsetY/skyParts.detail*j - slider.value*10, 
         skyParts.shapeWidth, skyParts.shapeHeight)
     }
   }
+}
+
+function seed_to_time(seed){
+  let hour = (Math.abs(slider.value - 70)/70%12 * 10 + 5)%12
+  let minute = hour
+  while(minute>0){
+    minute -= 1
+  }
+  minute *= 60
+  minute += 60
+  minute = int(minute)
+  if (minute == 0 || minute == 60) {
+    minute = "00"
+  }
+  if (minute<10 && minute != "00"){
+    minute = String(0)+String(minute)
+  }
+  
+  if (int(hour) == 0){
+    hour = 12
+  }
+  
+  let M = "PM"
+  if(String(int(hour)) == "12" || String(int(hour)) == "1" || String(int(hour)) == "2"){
+    M = "AM"
+  }
+  return String(int(hour))+":"+String(minute)+M
 }
 
 
