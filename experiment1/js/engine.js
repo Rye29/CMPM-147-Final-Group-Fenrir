@@ -2,7 +2,6 @@
 // Author: Your Name
 // Date:
 
-
 // Here is how you might set up an OOP p5.js project
 // Note that p5.js looks for a file called sketch.js
 
@@ -19,6 +18,8 @@ function resizeScreen() {
   centerVert = canvasContainer.height() / 2; // Adjusted for drawing logic
   console.log("Resizing...");
   resizeCanvas(canvasContainer.width(), canvasContainer.height());
+  shootLayer = createGraphics(canvasContainer.width(), canvasContainer.height());
+  shootLayer.clear();
   // redrawCanvas(); // Redraw everything based on new size
 }
 
@@ -33,12 +34,45 @@ let camera_velocity;
 let stars = [];
 let starCount = 30;
 
+let shootingStar = null; // null first
+let lastShoot = 0; // don't touch
+let shootInterval = 10000; // 10 seconds
+let shootLayer; // so it doesn't interrupt eclipse
+
+class ShootingStar {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x = random(width * 0.2, width * 0.5);
+    this.y = random(height * 0.05, height * 0.25);
+    this.length = random(80, 150);
+    this.speed = random(6, 10);
+    this.alpha = 255;
+  }
+
+  update() {
+    this.x += this.speed;
+    this.y += this.speed;
+    this.alpha -= 5;
+  }
+
+  draw() {
+    shootLayer.stroke(255, 255, 0, this.alpha); // yellow
+    shootLayer.strokeWeight(2); // between 2-4
+    shootLayer.line(this.x, this.y, this.x - this.length, this.y - this.length);
+  }
+
+  isDead() {
+    return this.alpha <= 0;
+  }
+}
+
 /////////////////////////////
 // Transforms between coordinate systems
 // These are actually slightly weirder than in full 3d...
 /////////////////////////////
-
-
 
 function preload() {
   if (window.p3_preload) {
@@ -54,6 +88,9 @@ function setup() {
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
   canvas.parent(containerId);
   // resize canvas is the page is resized
+
+  shootLayer = createGraphics(width, height); // for shooting star behavior
+  shootLayer.clear();
 
   if (window.p3_setup) {
     window.p3_setup();
@@ -80,7 +117,6 @@ function rebuildWorld(key) {
   if (window.p3_worldKeyChanged) {
     window.p3_worldKeyChanged(key);
   }
-  
 }
 
 // draw() function is called repeatedly, it's the main animation loop
@@ -100,6 +136,24 @@ function draw() {
     star.draw();
     star.checkMouseHover();
   }
+
+  shootLayer.clear();
+
+  if (millis() - lastShoot > shootInterval) {
+    shootingStar = new ShootingStar();
+    lastShoot = millis()
+  }
+
+  if (shootingStar) { // 
+    shootingStar.update(); 
+    shootingStar.draw(); 
+
+    if (shootingStar.isDead()) { 
+      shootingStar = null; 
+    } 
+  } 
+
+  image(shootLayer, 0, 0); 
 
   if (window.p3_drawAfter) {
     window.p3_drawAfter();
