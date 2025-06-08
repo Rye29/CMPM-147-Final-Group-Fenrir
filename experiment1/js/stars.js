@@ -1,4 +1,4 @@
-let MaxBrightness = 4;
+let MaxBrightness = 6;
 
 class Star {
   constructor(x, y, radius, color) {
@@ -15,6 +15,13 @@ class Star {
     fill(this.color);         
     noStroke();               
     ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
+    if (this.radius >= 4) {
+      // Draw a larger opace circle for larger stars using the same color
+      fill(this.color.levels[0], this.color.levels[1], this.color.levels[2], 50); // Semi-transparent
+      ellipse(this.x, this.y, this.radius * 3 + 5, this.radius * 3 + 5); // Slightly larger for glow effect
+
+
+    }
   }
 
   checkMouseHover() {
@@ -73,6 +80,7 @@ class Star {
 
         //Brightness Slider
         const slider = this.popup.elt.querySelector('#starBrightness');
+        slider.value = (this.radius / MaxBrightness) * 100; // Set initial value based on radius
         slider.addEventListener('input', (event) => {
             const value = event.target.value;
             this.radius = (value / 100) * MaxBrightness; // Scale radius based on slider value
