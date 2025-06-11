@@ -50,6 +50,7 @@ slider.oninput = function() {
 
 function p3_worldKeyChanged(key) {
   worldSeed = XXH.h32(key, 0);
+  noiseSeed(worldSeed)
   worldSeed = 0 + (worldSeed%70)
   slider.value = worldSeed
   document.getElementById("sliderText").textContent="Time: "+seed_to_time(worldSeed);

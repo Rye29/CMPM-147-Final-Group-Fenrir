@@ -96,6 +96,10 @@ function draw() {
     window.p3_draw_gradient()
   }
 
+  if (window.draw_grass) {
+    window.draw_grass();
+  }
+
   for (let star of stars) {
     star.draw();
     star.checkMouseHover();
