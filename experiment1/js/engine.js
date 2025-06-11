@@ -65,8 +65,15 @@ function setup() {
     rebuildWorld(inputKey.val());
   });
 
-  //Clear the stars array and generate new stars
-  generateStars();
+  let starInput = $("#starSlider");
+  let starText = $("#starCountText");
+  starInput.change(() => {
+    starCount = starInput.val();
+    starText.text(starCount);
+    adjustStarCount(starCount);
+  });
+  starInput.val(starCount);
+  starText.text(starCount);
 
   rebuildWorld(inputKey.val());
 
@@ -77,6 +84,13 @@ function setup() {
 }
 
 function rebuildWorld(key) {
+  //Update stars when the world key changes
+  randomSeed(calculateSeedFromKey(key));
+  starCount = floor(random(20,40));
+  $("#starSlider").val(starCount);
+  $("#starCountText").text(starCount);
+  generateStars();
+
   if (window.p3_worldKeyChanged) {
     window.p3_worldKeyChanged(key);
   }
@@ -92,17 +106,18 @@ function draw() {
   }
 
   if(window.p3_draw_gradient){
-    // !!! COMMENTED OUT FOR TESTING STARS !!!
     window.p3_draw_gradient()
   }
 
   if (window.draw_grass) {
     window.draw_grass();
   }
-
-  for (let star of stars) {
-    star.draw();
-    star.checkMouseHover();
+  
+  if ($("#starsCheckbox").is(":checked")) {
+    for (let star of stars) {
+      star.draw();
+      star.checkMouseHover();
+    }
   }
 
   if (window.p3_drawAfter) {
@@ -118,8 +133,6 @@ function mouseClicked() {
       if (star.popup) {
         continue;
       }
-      // Do something when the star is clicked
-      console.log("Star clicked at: ", star.x, star.y);
       star.createPopup(canvas);
     }
     else if (star.popup) {
@@ -139,4 +152,28 @@ function generateStars() {
     let c = color('white');
     stars.push(new Star(x, y, radius, c));
   }
+}
+
+function adjustStarCount(newCount) {
+  if (stars.length > newCount) {
+    stars.splice(newCount); // Remove excess stars
+  }
+  else if (stars.length < newCount) {
+    for (let i = stars.length; i < newCount; i++) {
+      let x = random(width);
+      let y = random(height / 2, 0);
+      let radius = random(2, 4); // Random radius between 2 and 4. Change later, they are big for testing
+
+      let c = color('white');
+      stars.push(new Star(x, y, radius, c));
+    }
+  }
+}
+
+function calculateSeedFromKey(key) {
+  let seed = 0;
+  for (let i = 0; i < key.length; i++) {
+    seed += key.charCodeAt(i) * (i + 1);
+  }
+  return seed;
 }
