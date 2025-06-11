@@ -91,6 +91,8 @@ function rebuildWorld(key) {
   $("#starCountText").text(starCount);
   generateStars();
 
+  $('#grassColorPicker').val('#969900') //reset grass color
+
   if (window.p3_worldKeyChanged) {
     window.p3_worldKeyChanged(key);
   }
@@ -146,7 +148,7 @@ function generateStars() {
   stars = [];
   for (let i = 0; i < starCount; i++) {
     let x = random(width);
-    let y = random(height / 2, 0);
+    let y = random(height / 1.5, 0);
     let radius = random(2, 4); // Random radius between 2 and 4. Change later, they are big for testing
 
     let c = color('white');

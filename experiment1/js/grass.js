@@ -4,7 +4,7 @@ function draw_grass() {
     console.log(col_lerp_factor)
     
     let mult = lerpColor( color(11, 24, 107), color(249,168,53),col_lerp_factor)
-    let primary = color(150,153,0)
+    let primary = $('#grassColorPicker').val();
     fill(red(primary)*red(mult)/255, green(primary)*green(mult)/255, blue(primary)*blue(mult)/255)
     beginShape();
     vertex(0, height)

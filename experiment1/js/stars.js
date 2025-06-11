@@ -76,6 +76,7 @@ class Star {
             <input type="range" min="1" max="100" value=50 class="slider" id="starBrightness"><br>
             Hue:
             <input type="color" id="starColor" value="${hex}"><br>
+            <br><button id="deleteStar">Delete Star</button>
             `);
 
         //Brightness Slider
@@ -93,6 +94,18 @@ class Star {
             const value = event.target.value;
             this.color = color(value); // Update star color
             this.draw(); // Redraw the star with the new color
+        });
+
+        // Delete Button
+        const deleteButton = this.popup.elt.querySelector('#deleteStar');
+        deleteButton.addEventListener('click', () => {
+            this.removePopup(); // Remove the popup
+            const index = stars.indexOf(this);
+            if (index > -1) {
+                stars.splice(index, 1); // Remove the star from the array
+            }
+            $('#starSlider').val(stars.length); // Update the star count slider
+            $('#starCountText').text(stars.length); // Update the star count display
         });
 
         // Set popup styles
