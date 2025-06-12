@@ -36,7 +36,7 @@ let starCount = 30;
 
 let shootingStar = null; // null first
 let lastShoot = 0; // don't touch
-let shootInterval = 10000; // 10 seconds
+let shootInterval = 1000; // 10 seconds
 let shootLayer; // so it doesn't interrupt eclipse
 
 class ShootingStar {
