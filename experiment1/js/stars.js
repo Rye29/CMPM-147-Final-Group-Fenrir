@@ -1,4 +1,18 @@
 let MaxBrightness = 6;
+let starSpeed = 0.05;
+
+function setupSpeedSlider() {
+  const speedSlider = $('#planetaryRotationSlider');
+  speedSlider.on('input', function() {
+    setSpeedSlider(this.value / 100);
+  });
+}
+
+function setSpeedSlider(value) {
+  starSpeed = value;
+  $('#planetaryRotationSlider').val(value * 100);
+  $('#planetaryRotationSpeedText').text(`${value.toFixed(2)}`);
+}
 
 class Star {
   constructor(x, y, radius, color) {
@@ -22,6 +36,10 @@ class Star {
 
 
     }
+  }
+
+  update() {
+    this.x += starSpeed;
   }
 
   checkMouseHover() {
@@ -73,7 +91,7 @@ class Star {
         this.popup = createDiv(`
             Star at (${this.x.toFixed(2)}, ${this.y.toFixed(2)})<br>
             Brightness:
-            <input type="range" min="1" max="100" value=50 class="slider" id="starBrightness"><br>
+            <input type="range" min="30" max="100" value=50 class="slider" id="starBrightness"><br>
             Hue:
             <input type="color" id="starColor" value="${hex}"><br>
             <br><button id="deleteStar">Delete Star</button>
@@ -124,3 +142,5 @@ class Star {
     }
   }
 }
+
+

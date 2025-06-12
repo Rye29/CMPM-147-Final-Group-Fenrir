@@ -48,6 +48,7 @@
 					<h2>Settings</h2>
 					<div>
 						World seed: <input type="text" id="world-seed" value="xyzzy">
+						<button id="generate-button">Generate New Seed</button>
 					</div>
 					<!-- You can add more settings here -->
 					<div class="slidecontainer">
@@ -56,8 +57,19 @@
 						Grass Color: <input type="color" id="grassColorPicker" value="#969900">
 						<br><br>
 						Enable Stars: <input type="checkbox" id="starsCheckbox" checked><br>
-						Star Count: <input type="range" min = "0" max = "80" value = "0" class="slider" id="starSlider">  <SPAN id = "starCountText">0</span><br>
-					  </div>
+						Star Count: <input type="range" min = "0" max = "200" value = "0" class="slider" id="starSlider">  <SPAN id = "starCountText">0</span><br><br>
+
+						Sky Gradient: <input type="color" id="skyGradientColorPicker0" value="#162581"><input type="color" id="skyGradientColorPicker1" value="#213193">
+						<input type="color" id="skyGradientColorPicker2" value="#3a48a0"><br>
+						Sunset: <input type="color" id="sunsetGradientColorPicker0" value="#9c56ac"><input type="color" id="sunsetGradientColorPicker1" value="#cb72a2">
+						<input type="color" id="sunsetGradientColorPicker2" value="#f9a835"> <input type="color" id="sunsetGradientColorPicker3" value="#f56c24"><br>
+
+						<br>Moon Count: <input type="range" min = "0" max = "4" value = "1" class="slider" id="moonSlider">  <SPAN id = "moonCountText">1</span><br>
+
+						<br>Planetary Rotation: <input type="checkbox" id="planetaryRotationCheckbox" checked><br>
+						Rotation Speed: <input type="range" min = "-100" max = "100" value = "5" class="slider" id="planetaryRotationSlider">  <SPAN id = "planetaryRotationSpeedText">0.05</span><br>
+						<br><br><br> <input type="button" id="saveButton" value="Save Image">
+					</div>
 				</div>
 			</div>
 			</div>
@@ -66,22 +78,6 @@
 			<div class="minor-section two-columns">
                 <div class="showcase-img">
                 </div>
-                <div>
-                    <h2>Description</h2>
-                    <p>TestDesc
-					</p>
-                </div>
-			</div>
-
-			<div class="minor-section">
-				<h2>Technical</h2>
-				<p>Jargon</p>>
-			</div>
-
-			<div class="minor-section">
-				<h2>Reflection</h2>
-				<p>look in the mirror</p>
-			</div>
 
 		</section>
 		<nav id="links" class="minor-section">

@@ -19,6 +19,8 @@ function resizeScreen() {
   centerVert = canvasContainer.height() / 2; // Adjusted for drawing logic
   console.log("Resizing...");
   resizeCanvas(canvasContainer.width(), canvasContainer.height());
+  shootLayer = createGraphics(canvasContainer.width(), canvasContainer.height());
+  shootLayer.clear();
   // redrawCanvas(); // Redraw everything based on new size
 }
 
@@ -33,6 +35,77 @@ let camera_velocity;
 let stars = [];
 let starCount = 30;
 
+let planetaryRotation = true;
+
+let shootingStar = null;
+let lastShoot = 0;
+let shootInterval = 10000;
+let shootLayer;
+
+let moonImages = [];
+let moon;
+let moons = [];
+
+// SHOOTING STAR (trying to put in)
+
+class ShootingStar {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x = random(width * 0.2, width * 0.5);
+    this.y = random(height * 0.05, height * 0.25);
+    this.length = random(80, 150);
+    this.speed = random(6, 10);
+    this.alpha = 255;
+  }
+
+  update() {
+    this.x += this.speed;
+    this.y += this.speed;
+    this.alpha -= 5;
+  }
+
+  draw() {
+    shootLayer.stroke(255, 255, 0, this.alpha); // yellow
+    shootLayer.strokeWeight(2); // between 2-4
+    shootLayer.line(this.x, this.y, this.x - this.length, this.y - this.length);
+  }
+
+  isDead() {
+    return this.alpha <= 0;
+  }
+}
+
+class Moon {
+  constructor(image,x,y) {
+    this.x = x;
+    this.y = y;
+    this.image = image;
+    this.size = random(20, 200);
+  }
+
+  draw() {
+    image(this.image, this.x, this.y, this.size, this.size); 
+  }
+
+  update() {
+    if (planetaryRotation) {
+      this.x += starSpeed / 2; // Adjust speed as needed
+      if (this.x > width) {
+        // If the moon goes off the right side, reset it to the left side
+        this.x = -this.size; // Reset position to the left side
+      }
+      if (this.x < -this.size) {
+        // If the moon goes off the left side, reset it to the right side
+        this.x = width; // Reset position to the right side
+      }
+    }
+  }
+}
+
+
 /////////////////////////////
 // Transforms between coordinate systems
 // These are actually slightly weirder than in full 3d...
@@ -41,6 +114,10 @@ let starCount = 30;
 
 
 function preload() {
+  for (let i = 1; i <= 7; i++) {
+    moonImages.push(loadImage(`Assets/Moon${i}.png`));
+  }
+  
   if (window.p3_preload) {
     window.p3_preload();
   }
@@ -54,6 +131,14 @@ function setup() {
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
   canvas.parent(containerId);
   // resize canvas is the page is resized
+
+  shootLayer = createGraphics(width, height);
+  shootLayer.clear();
+  
+  seedButton = $('#generate-button');
+  seedButton.click(() => {
+    generateNewSeed();
+  });
 
   if (window.p3_setup) {
     window.p3_setup();
@@ -75,6 +160,32 @@ function setup() {
   starInput.val(starCount);
   starText.text(starCount);
 
+  let rotationCheckbox = $("#planetaryRotationCheckbox");
+  rotationCheckbox.change(() => {
+    planetaryRotation = rotationCheckbox.is(":checked");
+  });
+
+  let saveCanvasButton = $('#saveButton');
+  saveCanvasButton.click(() => {
+    saveImage();
+  });
+
+  setupSpeedSlider();
+
+  let moonSlider = $("#moonSlider");
+  moonSlider.change(() => {
+    let moonCount = moonSlider.val();
+    if (moonCount > moons.length) {
+      for (let i = moons.length; i < moonCount; i++) {
+        moons.push(new Moon(moon, random(canvasContainer.width()), random(canvasContainer.height()/4)));
+      }
+    }
+    else if (moonCount < moons.length) {
+      moons.splice(moonCount); // Remove excess moons
+    }
+    $('#moonCountText').text(moonCount);
+  });
+
   rebuildWorld(inputKey.val());
 
   $(window).resize(function() {
@@ -90,6 +201,15 @@ function rebuildWorld(key) {
   $("#starSlider").val(starCount);
   $("#starCountText").text(starCount);
   generateStars();
+
+  setSpeedSlider(0.05);
+  moon = random(moonImages);
+  moons = [];
+  moons.push(new Moon(moon, random(canvasContainer.width()), random(canvasContainer.height()/4)));
+  $('#moonSlider').val(moons.length);
+  $('#moonCountText').text(moons.length);
+
+  reset_sidebar_colors();
 
   $('#grassColorPicker').val('#969900') //reset grass color
 
@@ -114,18 +234,68 @@ function draw() {
   if (window.draw_grass) {
     window.draw_grass();
   }
+
+
   
-  if ($("#starsCheckbox").is(":checked")) {
-    for (let star of stars) {
-      star.draw();
-      star.checkMouseHover();
+if ($("#starsCheckbox").is(":checked")) {
+  for (let i = stars.length - 1; i >= 0; i--) {
+    const star = stars[i];
+    if (planetaryRotation) star.update();
+    star.draw();
+    star.checkMouseHover();
+    
+    if (star.x - star.radius > width) {
+      star.removePopup();
+      star.x = 0 + star.radius; // Reset position to the left side
+    }
+    else if (star.x - star.radius < 0) {
+      star.removePopup();
+      star.x = width + star.radius; // Reset position to the right side
     }
   }
+
+  while (stars.length < starCount) {
+    const newStar = new Star(
+      random(-50, 0),
+      random(height / 1.5, 0),
+      random(2, 4),
+      color('white')
+    );
+    stars.push(newStar);
+  }
+}
+
+    shootLayer.clear();
+
+  if (millis() - lastShoot > shootInterval) {
+    shootingStar = new ShootingStar();
+    lastShoot = millis()
+  }
+  if (moon) {
+    for (let m of moons) {
+      m.draw();
+      m.update();
+    }
+  }
+  if (shootingStar) { // 
+    shootingStar.update(); 
+    shootingStar.draw(); 
+
+    if (shootingStar.isDead()) { 
+      shootingStar = null; 
+    } 
+  } 
+
+  image(shootLayer, 0, 0); 
 
   if (window.p3_drawAfter) {
     window.p3_drawAfter();
   }
 
+}
+
+function saveImage() {
+  saveCanvas('myNightSky', 'png');
 }
 
 function mouseClicked() {
@@ -178,4 +348,11 @@ function calculateSeedFromKey(key) {
     seed += key.charCodeAt(i) * (i + 1);
   }
   return seed;
+}
+
+function generateNewSeed() {
+  const newSeed = Math.floor(Math.random() * 1000000); // Generates a new random seed
+  console.log(`New seed generated: ${newSeed}`);
+  console.log("Generated seed using Math.random():", newSeed);
+  $('#world-seed').val(newSeed).change();
 }

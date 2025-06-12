@@ -30,6 +30,23 @@ let skyParts = {
 
 function p3_preload() {}
 
+function reset_sidebar_colors() {
+  $('#skyGradientColorPicker0').val('#162581'); // Night color 1
+  skyParts.colors[3] = [22, 37, 129]; // Night color 2
+  $('#skyGradientColorPicker1').val('#213193'); // Night color 2
+  skyParts.colors[4] = [33, 49, 147]; // Night color 3
+  $('#skyGradientColorPicker2').val('#3a48a0'); // Night color 3
+  skyParts.colors[5] = [58, 72, 160]; // Night color 4
+  $('#sunsetGradientColorPicker0').val('#9c56ac'); // Sunset color 1
+  skyParts.colors[6] = [156, 86, 172]; // Sunset color 1
+  $('#sunsetGradientColorPicker1').val('#cb72a2'); // Sunset color 2
+  skyParts.colors[7] = [203, 114, 162]; // Sunset color 2
+  $('#sunsetGradientColorPicker2').val('#f9a835'); // Sunset color 3
+  skyParts.colors[8] = [249, 168, 53]; // Sunset color 3
+  $('#sunsetGradientColorPicker3').val('#f56824'); // Sunset color 4
+  skyParts.colors[9] = [245, 108, 36]; // Sunset color 4
+}
+
 function p3_setup() {
   background("cyan")
   noStroke()
@@ -37,6 +54,38 @@ function p3_setup() {
   skyParts.shapeWidth = width*1.1
   skyParts.shapeHeight = height*0.4
   skyParts.offsetY = height*0.3
+
+  reset_sidebar_colors();
+
+  let skyColor0 = $('#skyGradientColorPicker0')
+  skyColor0.on('change', function() {
+    skyParts.colors[3] = [red(this.value), green(this.value), blue(this.value)];
+  });
+  let skyColor1 = $('#skyGradientColorPicker1')
+  skyColor1.on('change', function() {
+    skyParts.colors[4] = [red(this.value), green(this.value), blue(this.value)];
+  });
+  let skyColor2 = $('#skyGradientColorPicker2')
+  skyColor2.on('change', function() {
+    skyParts.colors[5] = [red(this.value), green(this.value), blue(this.value)];
+  });
+  let sunsetColor0 = $('sunsetGradientColorPicker0')
+  sunsetColor0.on('change', function() {
+    skyParts.colors[6] = [red(this.value), green(this.value), blue(this.value)];
+  });
+  let sunsetColor1 = $('#sunsetGradientColorPicker1')
+  sunsetColor1.on('change', function() {
+    skyParts.colors[7] = [red(this.value), green(this.value), blue(this.value)];
+  });
+  let sunsetColor2 = $('#sunsetGradientColorPicker2')
+  sunsetColor2.on('change', function() {
+    skyParts.colors[8] = [red(this.value), green(this.value), blue(this.value)];
+  });
+  let sunsetColor3 = $('#sunsetGradientColorPicker3')
+  sunsetColor3.on('change', function() {
+    skyParts.colors[9] = [red(this.value), green(this.value), blue(this.value)];
+  });
+
 }
 
 let worldSeed;
